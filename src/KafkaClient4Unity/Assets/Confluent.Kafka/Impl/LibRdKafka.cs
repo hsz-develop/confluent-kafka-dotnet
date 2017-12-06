@@ -218,6 +218,12 @@ namespace Confluent.Kafka.Impl
                 string path = userSpecifiedPath;
                 if (path == null)
                 {
+                    // highskillz: might be able to call the method through reflection
+                    //var getExecutingAssembly = typeof(Assembly).GetRuntimeMethods()
+                    //            .Where(m => m.Name.Equals("GetExecutingAssembly"))
+                    //            .FirstOrDefault();
+                    //getExecutingAssembly.Invoke(null, null);
+
                     // in net45, librdkafka.dll is not in the process directory, we have to load it manually
                     // and also search in the same folder for its dependencies (LOAD_WITH_ALTERED_SEARCH_PATH)
                     var is64 = IntPtr.Size == 8;
@@ -262,8 +268,9 @@ namespace Confluent.Kafka.Impl
 
                 var nativeMethodTypes = new List<Type>();
 
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
+                https://github.com/Microsoft/CSharpClient-for-Kafka/issues/12
+                //if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                //{
                     if (userSpecifiedPath != null)
                     {
                         if (WindowsNative.LoadLibraryEx(userSpecifiedPath, IntPtr.Zero, WindowsNative.LoadLibraryFlags.LOAD_WITH_ALTERED_SEARCH_PATH) == IntPtr.Zero)
@@ -275,40 +282,40 @@ namespace Confluent.Kafka.Impl
                     }
 
                     nativeMethodTypes.Add(typeof(NativeMethods.NativeMethods));
-                }
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                {
-                    if (userSpecifiedPath != null)
-                    {
-                        if (PosixNative.dlopen(userSpecifiedPath, RTLD_NOW) == IntPtr.Zero)
-                        {
-                            throw new InvalidOperationException($"Failed to load librdkafka at location '{userSpecifiedPath}'. dlerror: '{PosixNative.LastError}'.");
-                        }
-                    }
+                //}
+                //else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                //{
+                //    if (userSpecifiedPath != null)
+                //    {
+                //        if (PosixNative.dlopen(userSpecifiedPath, RTLD_NOW) == IntPtr.Zero)
+                //        {
+                //            throw new InvalidOperationException($"Failed to load librdkafka at location '{userSpecifiedPath}'. dlerror: '{PosixNative.LastError}'.");
+                //        }
+                //    }
 
-                    nativeMethodTypes.Add(typeof(NativeMethods.NativeMethods));
-                }
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                {
-                    if (userSpecifiedPath != null)
-                    {
-                        if (PosixNative.dlopen(userSpecifiedPath, RTLD_NOW) == IntPtr.Zero)
-                        {
-                            throw new InvalidOperationException($"Failed to load librdkafka at location '{userSpecifiedPath}'. dlerror: '{PosixNative.LastError}'.");
-                        }
+                //    nativeMethodTypes.Add(typeof(NativeMethods.NativeMethods));
+                //}
+                //else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                //{
+                //    if (userSpecifiedPath != null)
+                //    {
+                //        if (PosixNative.dlopen(userSpecifiedPath, RTLD_NOW) == IntPtr.Zero)
+                //        {
+                //            throw new InvalidOperationException($"Failed to load librdkafka at location '{userSpecifiedPath}'. dlerror: '{PosixNative.LastError}'.");
+                //        }
                     
-                        nativeMethodTypes.Add(typeof(NativeMethods.NativeMethods));
-                    }
-                    else 
-                    {
-                        nativeMethodTypes.Add(typeof(NativeMethods.NativeMethods));
-                        nativeMethodTypes.Add(typeof(NativeMethods.NativeMethods_Debian9));
-                    }
-                }
-                else
-                {
-                    throw new InvalidOperationException($"Unsupported platform: {RuntimeInformation.OSDescription}");
-                }
+                //        nativeMethodTypes.Add(typeof(NativeMethods.NativeMethods));
+                //    }
+                //    else 
+                //    {
+                //        nativeMethodTypes.Add(typeof(NativeMethods.NativeMethods));
+                //        nativeMethodTypes.Add(typeof(NativeMethods.NativeMethods_Debian9));
+                //    }
+                //}
+                //else
+                //{
+                //    throw new InvalidOperationException($"Unsupported platform: {RuntimeInformation.OSDescription}");
+                //}
 
                 foreach (var t in nativeMethodTypes)
                 {
