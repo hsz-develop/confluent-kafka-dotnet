@@ -37,7 +37,7 @@ namespace Confluent.Kafka
         public static void ConsoleLogger(object obj, LogMessage logInfo)
         {
             var now = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
-            Console.Error.WriteLine($"{logInfo.Level}|{now}|{logInfo.Name}|{logInfo.Facility}| {logInfo.Message}");
+            UnityEngine.Debug.Log($"{logInfo.Level}|{now}|{logInfo.Name}|{logInfo.Facility}| {logInfo.Message}");
         }
     }
 }

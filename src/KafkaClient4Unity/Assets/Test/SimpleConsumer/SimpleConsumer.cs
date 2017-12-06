@@ -44,18 +44,18 @@ namespace Confluent.Kafka.Examples.SimpleConsumer
                 
                 // Raised on critical errors, e.g. connection failures or all brokers down.
                 consumer.OnError += (_, error)
-                    => Console.WriteLine($"Error: {error}");
+                    => UnityEngine.Debug.Log($"Error: {error}");
 
                 // Raised on deserialization errors or when a consumed message has an error != NoError.
                 consumer.OnConsumeError += (_, error)
-                    => Console.WriteLine($"Consume error: {error}");
+                    => UnityEngine.Debug.Log($"Consume error: {error}");
                 
                 while (true) // Highskillz: this will NOT work. active waiting will freeze the app
                 {
                     Message<Ignore, string> msg;
                     if (consumer.Consume(out msg, TimeSpan.FromSeconds(1)))
                     {
-                        Console.WriteLine($"Topic: {msg.Topic} Partition: {msg.Partition} Offset: {msg.Offset} {msg.Value}");
+                        Debug.Log($"Topic: {msg.Topic} Partition: {msg.Partition} Offset: {msg.Offset} {msg.Value}");
                     }
                 }
             }
