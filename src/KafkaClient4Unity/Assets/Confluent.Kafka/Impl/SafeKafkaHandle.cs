@@ -321,7 +321,10 @@ namespace Confluent.Kafka.Impl
         internal WatermarkOffsets QueryWatermarkOffsets(string topic, int partition, int millisecondsTimeout)
         {
             ThrowIfHandleClosed();
-            ErrorCode err = LibRdKafka.query_watermark_offsets(handle, topic, partition, out long low, out long high, (IntPtr)millisecondsTimeout);
+
+            long low, high;
+            ErrorCode err = LibRdKafka.query_watermark_offsets(handle, topic, partition, out low, out high, (IntPtr)millisecondsTimeout);
+            //ErrorCode err = LibRdKafka.query_watermark_offsets(handle, topic, partition, out long low, out long high, (IntPtr)millisecondsTimeout);
             if (err != ErrorCode.NoError)
             {
                 throw new KafkaException(err);
@@ -333,7 +336,9 @@ namespace Confluent.Kafka.Impl
         internal WatermarkOffsets GetWatermarkOffsets(string topic, int partition)
         {
             ThrowIfHandleClosed();
-            ErrorCode err = LibRdKafka.get_watermark_offsets(handle, topic, partition, out long low, out long high);
+            long low, high;
+            ErrorCode err = LibRdKafka.get_watermark_offsets(handle, topic, partition, out low, out high);
+            //ErrorCode err = LibRdKafka.get_watermark_offsets(handle, topic, partition, out long low, out long high);
             if (err != ErrorCode.NoError)
             {
                 throw new KafkaException(err);
@@ -427,7 +432,9 @@ namespace Confluent.Kafka.Impl
                 topic = Util.Marshal.PtrToStringUTF8(LibRdKafka.topic_name(msg.rkt));
             }
 
-            long timestamp = LibRdKafka.message_timestamp(msgPtr, out IntPtr timestampType);
+            IntPtr timestampType;
+            long timestamp = LibRdKafka.message_timestamp(msgPtr, out timestampType);
+            //long timestamp = LibRdKafka.message_timestamp(msgPtr, out IntPtr timestampType);
 
             LibRdKafka.message_destroy(msgPtr);
 
@@ -812,7 +819,9 @@ namespace Confluent.Kafka.Impl
         private List<GroupInfo> ListGroupsImpl(string group, int millisecondsTimeout)
         {
             ThrowIfHandleClosed();
-            ErrorCode err = LibRdKafka.list_groups(handle, group, out IntPtr grplistPtr, (IntPtr)millisecondsTimeout);
+            IntPtr grplistPtr;
+            ErrorCode err = LibRdKafka.list_groups(handle, group, out grplistPtr, (IntPtr)millisecondsTimeout);
+            //ErrorCode err = LibRdKafka.list_groups(handle, group, out IntPtr grplistPtr, (IntPtr)millisecondsTimeout);
             if (err == ErrorCode.NoError)
             {
                 var list = Util.Marshal.PtrToStructure<rd_kafka_group_list>(grplistPtr);
