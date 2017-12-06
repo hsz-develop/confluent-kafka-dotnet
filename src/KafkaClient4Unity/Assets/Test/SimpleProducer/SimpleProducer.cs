@@ -37,9 +37,8 @@ namespace Confluent.Kafka.Examples.SimpleProducer
             {
                 Debug.Log($"{producer.Name} producing on {topicName}. q to exit.");
 
-                string text;
-                while (true)
-                //while ((text = Console.ReadLine()) != "q") // hsz comment: in principle this will never work - active waiting will block the app
+                string text = "testMessageFromHighskillz";
+                //while ((text = Console.ReadLine()) != "q")
                 //{
                     var deliveryReport = producer.ProduceAsync(topicName, null, text);
                     deliveryReport.ContinueWith(task =>
