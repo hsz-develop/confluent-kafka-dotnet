@@ -180,8 +180,9 @@ namespace Confluent.Kafka.Impl
                 // throws if the native library failed to load.
                 _err2str(ErrorCode.NoError);
             }
-            catch (Exception)
+            catch (Exception exception)
             {
+                UnityEngine.Debug.LogException(exception);
                 return false;
             }
 
