@@ -22,26 +22,36 @@ using System.Linq;
 using System.Text;
 using Confluent.Kafka.Serialization;
 using UnityEngine;
+using System.Collections;
 
 namespace Confluent.Kafka.Examples.SimpleConsumer
 {
     public class SimpleConsumer : MonoBehaviour
     {
-        public static void Main(string[] args)
+        public void Start()
         {
-            string brokerList = "brokerListTest";
-            var topics = new List<string>() { "topic1Test", "topic2Test" };
+            StartCoroutine(ConsumerCoroutine());
+        }
 
-            var config = new Dictionary<string, object>
-            {
-                { "group.id", "simple-csharp-consumer" },
-                { "bootstrap.servers", brokerList }
-            };
+        private IEnumerator ConsumerCoroutine()
+        {
+            var topics = new List<string>() { "test" };
+
+            var config = new Dictionary<string, object> {   { "bootstrap.servers", "52.35.61.218:9092" },
+                                                            //{ "builtin.features", "sasl_plain" },
+                                                            { "metadata.request.timeout.ms", 5000 },
+                                                            { "socket.timeout.ms", 5000 },
+                                                            { "sasl.username", "sintef" },
+                                                            { "sasl.password", "s3d4f5g" },
+                                                            { "client.id", "partner1" },
+                                                            { "group.id", "human" },
+                                                            //{ "debug", "broker" },
+                                                        };
 
             using (var consumer = new Consumer<Ignore, string>(config, null, new StringDeserializer(Encoding.UTF8)))
             {
                 consumer.Assign(new List<TopicPartitionOffset> { new TopicPartitionOffset(topics.First(), 0, 0) });
-                
+
                 // Raised on critical errors, e.g. connection failures or all brokers down.
                 consumer.OnError += (_, error)
                     => UnityEngine.Debug.Log($"Error: {error}");
@@ -49,14 +59,16 @@ namespace Confluent.Kafka.Examples.SimpleConsumer
                 // Raised on deserialization errors or when a consumed message has an error != NoError.
                 consumer.OnConsumeError += (_, error)
                     => UnityEngine.Debug.Log($"Consume error: {error}");
-                
-                while (true) // Highskillz: this will NOT work. active waiting will freeze the app
+
+                while (true)
                 {
                     Message<Ignore, string> msg;
-                    if (consumer.Consume(out msg, TimeSpan.FromSeconds(1)))
+                    if (consumer.Consume(out msg, TimeSpan.FromSeconds(Time.deltaTime)))
                     {
                         Debug.Log($"Topic: {msg.Topic} Partition: {msg.Partition} Offset: {msg.Offset} {msg.Value}");
                     }
+
+                    yield return null;
                 }
             }
         }

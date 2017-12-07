@@ -5,6 +5,9 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Test/SimpleProducer/TestProducerScene.unity
     guid: 3e3b6fccb43e9454296b5ff056be2044
+  - enabled: 1
+    path: Assets/Test/SimpleConsumer/TestConsumerScene.unity
+    guid: 751737705d03c154eb55f38b3a85b010

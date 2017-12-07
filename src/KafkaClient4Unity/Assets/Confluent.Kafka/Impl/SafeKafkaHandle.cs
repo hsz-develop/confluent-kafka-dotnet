@@ -404,7 +404,7 @@ namespace Confluent.Kafka.Impl
         {
             ThrowIfHandleClosed();
             // TODO: There is a newer librdkafka interface for this now. Use that.
-            IntPtr msgPtr = LibRdKafka.consumer_poll(handle, millisecondsTimeout);
+            IntPtr msgPtr = LibRdKafka.consumer_poll(handle, millisecondsTimeout); // Highskillz: Here it does active wait during "millisecondsTimeout"
             if (msgPtr == IntPtr.Zero)
             {
                 message = null;
