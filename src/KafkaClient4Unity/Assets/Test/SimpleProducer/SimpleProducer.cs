@@ -37,11 +37,13 @@ namespace Confluent.Kafka.Examples.SimpleProducer
             string topicName = "test";
 
             var config = new Dictionary<string, object> {   { "bootstrap.servers", "52.35.61.218:9092" },
-                                                            { "builtin.features", "sasl_plain" },
+                                                            //{ "builtin.features", "sasl_plain" },
                                                             { "metadata.request.timeout.ms", 5000 },
                                                             { "socket.timeout.ms", 5000 },
                                                             { "sasl.username", "sintef" },
                                                             { "sasl.password", "s3d4f5g" },
+                                                            { "client.id", "partner1" },
+                                                            { "group.id", "human" },
                                                             { "debug", "broker" },
                                                         };
 
