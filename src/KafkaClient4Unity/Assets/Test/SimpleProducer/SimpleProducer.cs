@@ -21,6 +21,7 @@ using System.Text;
 using System.Collections.Generic;
 using Confluent.Kafka.Serialization;
 using UnityEngine;
+using System.Collections;
 
 namespace Confluent.Kafka.Examples.SimpleProducer
 {
@@ -28,29 +29,46 @@ namespace Confluent.Kafka.Examples.SimpleProducer
     {
         public void Start()
         {
-            string brokerList = "brokerListExample";
-            string topicName = "topicNameExample";
+            StartCoroutine(SendTestMessage());
+        }
 
-            var config = new Dictionary<string, object> { { "bootstrap.servers", brokerList } };
+        private IEnumerator SendTestMessage()
+        {
+            string topicName = "test";
+
+            var config = new Dictionary<string, object> {   { "bootstrap.servers", "52.35.61.218:9092" },
+                                                            { "builtin.features", "sasl_plain" },
+                                                            { "metadata.request.timeout.ms", 5000 },
+                                                            { "socket.timeout.ms", 5000 },
+                                                            { "sasl.username", "sintef" },
+                                                            { "sasl.password", "s3d4f5g" },
+                                                            { "debug", "broker" },
+                                                        };
 
             using (var producer = new Producer<Null, string>(config, null, new StringSerializer(Encoding.UTF8)))
             {
-                Debug.Log($"{producer.Name} producing on {topicName}. q to exit.");
+                //Debug.Log($"{producer.Name} producing on {topicName}. q to exit.");
 
                 string text = "testMessageFromHighskillz";
                 //while ((text = Console.ReadLine()) != "q")
                 //{
-                    var deliveryReport = producer.ProduceAsync(topicName, null, text);
-                    deliveryReport.ContinueWith(task =>
-                    {
-                        Debug.Log($"Partition: {task.Result.Partition}, Offset: {task.Result.Offset}");
-                    });
+
+                yield return new WaitForSeconds(10);
+
+                var deliveryReport = producer.ProduceAsync(topicName, null, text);
+                deliveryReport.ContinueWith(task =>
+                {
+                    Debug.Log($"Partition: {task.Result.Partition}, Offset: {task.Result.Offset}");
+                });
                 //}
+
+                yield return new WaitForSeconds(10);
 
                 // Tasks are not waited on synchronously (ContinueWith is not synchronous),
                 // so it's possible they may still in progress here.
-                producer.Flush(TimeSpan.FromSeconds(10));
+                //producer.Flush(TimeSpan.FromSeconds(10));
             }
+
         }
     }
 }
